@@ -41,7 +41,7 @@ dkms.conf
 .DS_store
 
 # C output
-c-out/
+build/
 
 # compile commands
 compile_commands.json
