@@ -32,7 +32,7 @@ __cmp_huffman_build (cdsa_sll_restrict_ptr_t q1, cdsa_sll_restrict_ptr_t q2)
         n_new->freq = n1->freq + n2->freq;
         n_new->is_leaf = false;
 
-        cdsa_sll_pushb (q2, (__sll_data_t)n_new);
+        cdsa_sll_pushb (q2, (__cdsa_sll_data_t)n_new);
     }
 
     return (__cmp_huffman_node_t *)cdsa_sll_front (q1->size == 0 ? q2 : q1);
@@ -49,7 +49,7 @@ __cmp_huffman_initq_freq (cdsa_sll_t q, int *freqs)
         new->is_leaf = true;
         new->symb = s;
         new->freq = freqs[s];
-        cdsa_sll_pushb (q, (__sll_data_t) new);
+        cdsa_sll_pushb (q, (__cdsa_sll_data_t) new);
     }
 
     cdsa_sll_sort (q, __cmp_huffman_node_ptr_compar);

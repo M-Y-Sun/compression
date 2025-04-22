@@ -88,7 +88,7 @@ cmp_huffman_encode_pq (cmp_huffman_t this)
     }
 
     cdsa_heap_t heap;
-    cdsa_heap_init_arr_compar (heap, (__heap_val_t *)nodes, nsiz,
+    cdsa_heap_init_arr_compar (heap, (__cdsa_heap_val_t *)nodes, nsiz,
                                sizeof (nodes[0]), __cmp_huffman_node_ptr_compar);
 
     while (heap->size > 1) {
@@ -101,7 +101,7 @@ cmp_huffman_encode_pq (cmp_huffman_t this)
         new->is_leaf = false;
         new->freq = new->lc->freq + new->rc->freq;
 
-        cdsa_heap_replace_always (heap, (__heap_val_t) new);
+        cdsa_heap_replace_always (heap, (__cdsa_heap_val_t) new);
     }
 
     this->root = (__cmp_huffman_node_t *)cdsa_heap_top (heap);
