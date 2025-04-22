@@ -22,10 +22,12 @@ typedef struct __huffman_node_struct_t {
     struct __huffman_node_struct_t *pa;
 } __huffman_node_t;
 
-typedef struct {
+typedef struct __huffman_struct {
     int fd;
     __huffman_node_t *root;
 } cmp_huffman_t[1];
+
+typedef struct __huffman_struct *restrict cmp_huffman_restrict_ptr_t;
 
 extern void cmp_huffman_init (cmp_huffman_t this, int fd);
 

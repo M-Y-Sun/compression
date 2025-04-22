@@ -4,11 +4,12 @@
 
 #include <c_dsa/heap/heap.h>
 #include <c_dsa/sll/sll.h>
+#include <c_dsa/sll/structs.h>
 
 #include "compression.h"
 
 __huffman_node_t *
-__huffman_build (cdsa_sll_t q1, cdsa_sll_t q2)
+__huffman_build (cdsa_sll_restrict_ptr_t q1, cdsa_sll_restrict_ptr_t q2)
 {
     while (q1->size + q2->size > 1) {
         __huffman_node_t *n1, *n2;
