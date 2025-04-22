@@ -3,4 +3,40 @@
 #ifndef COMPRESSION_H
 #define COMPRESSION_H
 
+#define __CMP_BUFSIZ 0x1000 // 4096
+
+typedef unsigned char __huffman_symbol;
+
+#define __HUFFMAN_SYMBOL_MAX (1 << (8 * sizeof (__huffman_symbol)))
+
+#include <stdbool.h>
+#include <sys/types.h>
+
+typedef struct __huffman_node_struct_t {
+    bool is_leaf;
+    int freq;
+    __huffman_symbol symb;
+
+    struct __huffman_node_struct_t *lc;
+    struct __huffman_node_struct_t *rc;
+    struct __huffman_node_struct_t *pa;
+} __huffman_node_t;
+
+typedef struct {
+    int fd;
+    __huffman_node_t *root;
+} cmp_huffman_t[1];
+
+extern void cmp_huffman_init (cmp_huffman_t this, int fd);
+
+extern void cmp_huffman_deinit (cmp_huffman_t this);
+
+extern void cmp_huffman_reinit (cmp_huffman_t this, int fd);
+
+extern int __huffman_node_ptr_compar (const void *p_lhs, const void *p_rhs);
+
+extern ssize_t cmp_huffman_encode_pq (cmp_huffman_t this);
+
+extern ssize_t cmp_huffman_encode (cmp_huffman_t this);
+
 #endif

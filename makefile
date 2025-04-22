@@ -2,8 +2,10 @@ MAKEFLAGS += --silent
 
 .PHONY: default so a fast debug size verbose clean
 
+FLAGS ?=
+
 CC = clang
-CFLAGS = $(INCLUDES) -Wall -Wextra -Wpedantic
+CFLAGS = $(INCLUDES) $(LDPATH) $(LIBRARIES) -Wall -Wextra -Wpedantic $(FLAGS)
 OPTIMIZE ?= O1
 
 FILE = main
@@ -16,6 +18,8 @@ BIN = $(FILE)
 INCL_DIR = include
 
 INCLUDES = $$(find include -type d | sed 's/^/-I.\//')
+LDPATH = -L/usr/local/lib
+LIBRARIES = -lsll -lheap
 
 define MKDIRS
 /bin/sh -c ' \
@@ -83,26 +87,9 @@ so: $(MAIN)
 	echo "Output dumped to \`$(C_OUT)/lib/'"
 
 all:
-	$(MKDIRS)
-	$(CCPFX) -$(OPTIMIZE)
-	for dir in $(SRC_DIR)/*/; do \
-		dir=$${dir%*/}; \
-		dirn=$${dir##*/}; \
-		mkdir tmp && cd tmp; \
-		clang -c -fPIC $$(find ../$$dir -type f -name '*.c') $$(find ../include -type d | sed 's/^/-I.\//') -Wall -Wextra -Wpedantic; \
-		cd ..; \
-		ar r $(C_OUT)/lib/lib$${dirn}.a $$(find tmp -type f); \
-		rm -r tmp; \
-		\
-		clang -shared -fPIC $$(find $$dir -type f -name '*.c') -o $(C_OUT)/lib/lib$${dirn}.so $(CFLAGS) -Wl,-install_name,lib/lib$${dirn}.so; \
-		\
-		echo "Created lib$${dirn}.a"; \
-		echo "Created lib$${dirn}.so"; \
-	done
-	$(REPLACE_FILES)
-	$(PRUNE)
-	echo "Binary dumped to \`$(C_OUT)/bin/'"
-	echo "Libraries dumped to \`$(C_OUT)/lib/'"
+	$(MAKE) fast
+	$(MAKE) a
+	$(MAKE) so
 
 fast: $(MAIN)
 	$(MKDIRS)
@@ -137,12 +124,15 @@ clean:
 	if [ -f compile_commands.json ]; then rm -r compile_commands.json; echo 'Removed compile_commands.json'; fi
 	echo 'Build clean'
 
+IINCL_DIR=compression
+
 install: 
 	if [ ! -d $(C_OUT) ] || [ ! -d $(C_OUT)/lib ]; then \
 		echo 'Nothing to install'; \
 	else \
-		find $(C_OUT)/lib -type f -exec cp {} $(IPREFIX)/lib \;; \
-		find $(C_OUT)/lib -type f -exec echo Installed {} to $(IPREFIX)/lib/{} \;; \
+		find $(C_OUT)/lib -type f -exec cp {} $(IPREFIX)/lib \; -exec echo Installed {} to $(IPREFIX)/lib/{} \;; \
+		mkdir -p $(IPREFIX)/include/c/$(IINCL_DIR); \
+		find $(INCL_DIR) -type f -exec $(SHELL) -c 'loc=$(IPREFIX)/include/c/$(IINCL_DIR)/$$(echo {} | sed "s:^$(INCL_DIR)\/::" | sed "s:/.*$$::"); mkdir -p $$loc; cp {} $$loc' \; -exec echo Installed {} to $(IPREFIX)/include/c/$(IINCL_DIR)/ \;; \
 	fi
 	echo 'All done'
 
@@ -159,4 +149,5 @@ uninstall:
 			echo "Uninstalled $${name}.so"; \
 		fi; \
 	done
+	rm -rv $(IPREFIX)/include/c/$(IINCL_DIR) | sed 's/^/Uninstalled /'
 	echo 'All done'
