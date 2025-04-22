@@ -26,8 +26,8 @@ main (int argc, char **argv)
 
     cmp_huffman_t huffman;
     cmp_huffman_init (huffman, fd);
-    // cmp_huffman_encode (huffman);
-    cmp_huffman_encode_pq (huffman);
+    cmp_huffman_encode (huffman);
+    // cmp_huffman_encode_pq (huffman);
     cmp_huffman_deinit (huffman);
 
     close (fd);

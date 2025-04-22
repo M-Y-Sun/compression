@@ -10,11 +10,11 @@
 
 #include "compression.h"
 
-extern __huffman_node_t *__huffman_build (cdsa_sll_restrict_ptr_t q1,
+extern __cmp_huffman_node_t *__cmp_huffman_build (cdsa_sll_restrict_ptr_t q1,
                                           cdsa_sll_restrict_ptr_t q2);
 
-extern void __huffman_initq_freq (cdsa_sll_t q, int *freqs);
+extern void __cmp_huffman_initq_freq (cdsa_sll_t q, int *freqs);
 
-extern ssize_t __huffman_encode (cmp_huffman_t huffman);
+extern ssize_t __cmp_huffman_encode (cmp_huffman_t huffman);
 
 #endif
